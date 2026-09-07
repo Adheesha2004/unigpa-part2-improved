@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   GRADE_SCALE,
@@ -82,12 +83,14 @@ function Index() {
     false,
     isBoolean
   );
+  const [confirmClearOpen, setConfirmClearOpen] = useState(false);
 
   function clearAll() {
     setSubjects([]);
     setCalculated(false);
     subjectsStore.clear();
     calculatedStore.clear();
+    setConfirmClearOpen(false);
   }
 
   const gpa = calculateGpa(subjects);
