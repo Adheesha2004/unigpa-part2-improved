@@ -13,6 +13,7 @@ import { SubjectTable } from "@/components/gpa/SubjectTable";
 import { GpaResultCard } from "@/components/gpa/GpaResultCard";
 import { WhatIfPanel } from "@/components/gpa/WhatIfPanel";
 import { GradeReference } from "@/components/gpa/GradeReference";
+import { ExportReport } from "@/components/gpa/ExportReport";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -179,6 +180,7 @@ function Index() {
               totalPoints={points}
               calculated={calculated}
             />
+            <ExportReport subjects={subjects} gpa={gpa} />
             <div className="grid grid-cols-2 gap-4">
               <div className="card-elevated p-4">
                 <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">

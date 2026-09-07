@@ -1,0 +1,183 @@
+import { toast } from "sonner";
+import {
+  gpaStanding,
+  gradePoints,
+  subjectPoints,
+  totalCredits,
+  totalPoints,
+  type Subject,
+} from "@/lib/gpa";
+
+interface Props {
+  subjects: Subject[];
+  gpa: number | null;
+}
+
+function reportDate() {
+  return new Date().toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
+function buildText(subjects: Subject[], gpa: number | null): string {
+  const credits = totalCredits(subjects);
+  const points = totalPoints(subjects);
+  const lines: string[] = [];
+  lines.push("UniGPA — GPA Summary Report");
+  lines.push(`Generated: ${reportDate()}`);
+  lines.push("");
+  lines.push("Subject".padEnd(28) + "Credits".padEnd(10) + "Grade".padEnd(8) + "Points");
+  lines.push("-".repeat(54));
+  for (const s of subjects) {
+    lines.push(
+      s.name.slice(0, 26).padEnd(28) +
+        String(s.credits).padEnd(10) +
+        s.grade.padEnd(8) +
+        subjectPoints(s).toFixed(1)
+    );
+  }
+  lines.push("-".repeat(54));
+  lines.push(`Subjects: ${subjects.length}`);
+  lines.push(`Total credits: ${credits}`);
+  lines.push(`Total grade points: ${points.toFixed(1)}`);
+  lines.push(`Weighted GPA: ${gpa !== null ? gpa.toFixed(2) : "—"} / 4.00`);
+  if (gpa !== null) lines.push(`Standing: ${gpaStanding(gpa)}`);
+  lines.push("");
+  lines.push("GPA = Σ(credits × grade points) ÷ Σcredits");
+  return lines.join("\n");
+}
+
+function escapeHtml(value: string): string {
+  return value.replace(/[&<>"]/g, (c) =>
+    c === "&" ? "&amp;" : c === "<" ? "&lt;" : c === ">" ? "&gt;" : "&quot;"
+  );
+}
+
+function buildHtml(subjects: Subject[], gpa: number | null): string {
+  const credits = totalCredits(subjects);
+  const points = totalPoints(subjects);
+  const rows = subjects
+    .map(
+      (s) => `<tr>
+        <td>${escapeHtml(s.name)}</td>
+        <td class="num">${s.credits}</td>
+        <td class="num">${escapeHtml(s.grade)}</td>
+        <td class="num">${gradePoints(s.grade).toFixed(1)}</td>
+        <td class="num">${subjectPoints(s).toFixed(1)}</td>
+      </tr>`
+    )
+    .join("");
+
+  return `<!doctype html>
+<html><head><meta charset="utf-8" />
+<title>UniGPA Report</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: ui-sans-serif, system-ui, "Segoe UI", sans-serif; color: #1c1c1a; background: #fff; margin: 0; padding: 40px; }
+  .wrap { max-width: 720px; margin: 0 auto; }
+  header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 3px solid #14532d; padding-bottom: 12px; }
+  h1 { font-size: 22px; margin: 0; color: #14532d; letter-spacing: -0.01em; }
+  .sub { font-size: 12px; color: #6b7280; margin-top: 4px; }
+  .hero { margin: 24px 0; padding: 20px 24px; background: #14532d; color: #fff; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; }
+  .hero .gpa { font-size: 44px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+  .hero .label { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; opacity: .7; }
+  .hero .standing { color: #f2c14e; font-size: 13px; font-weight: 600; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+  th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: #6b7280; border-bottom: 1px solid #d8d5cc; padding: 8px 6px; }
+  td { padding: 9px 6px; border-bottom: 1px solid #eceae3; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  tfoot td { font-weight: 700; border-top: 2px solid #14532d; border-bottom: none; }
+  footer { margin-top: 28px; font-size: 11px; color: #6b7280; text-align: center; }
+  @media print { body { padding: 0; } .hero { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+</style></head>
+<body><div class="wrap">
+  <header>
+    <div><h1>UniGPA — GPA Summary Report</h1><div class="sub">Weighted GPA on a 4.00 scale</div></div>
+    <div class="sub">${reportDate()}</div>
+  </header>
+  <div class="hero">
+    <div>
+      <div class="label">Weighted GPA</div>
+      <div class="gpa">${gpa !== null ? gpa.toFixed(2) : "—"}</div>
+      <div class="standing">${gpa !== null ? escapeHtml(gpaStanding(gpa)) : ""}</div>
+    </div>
+    <div style="text-align:right;font-size:12px;opacity:.85">
+      <div>${subjects.length} subject${subjects.length === 1 ? "" : "s"}</div>
+      <div>${credits} credits</div>
+      <div>${points.toFixed(1)} grade points</div>
+    </div>
+  </div>
+  <table>
+    <thead><tr><th>Subject</th><th class="num">Credits</th><th class="num">Grade</th><th class="num">Pts/credit</th><th class="num">Points</th></tr></thead>
+    <tbody>${rows}</tbody>
+    <tfoot><tr><td>Total</td><td class="num">${credits}</td><td></td><td></td><td class="num">${points.toFixed(1)}</td></tr></tfoot>
+  </table>
+  <footer>GPA = Σ(credits × grade points) ÷ Σcredits · Generated by UniGPA</footer>
+</div>
+<script>window.onload = function () { window.focus(); window.print(); };</script>
+</body></html>`;
+}
+
+export function ExportReport({ subjects, gpa }: Props) {
+  const disabled = subjects.length === 0;
+
+  function handlePrint() {
+    if (disabled) return;
+    const win = window.open("", "_blank", "width=900,height=1000");
+    if (!win) {
+      toast.error("Pop-up blocked", {
+        description: "Allow pop-ups for this site to print your report.",
+      });
+      return;
+    }
+    win.document.write(buildHtml(subjects, gpa));
+    win.document.close();
+  }
+
+  function handleDownload() {
+    if (disabled) return;
+    const blob = new Blob([buildText(subjects, gpa)], {
+      type: "text/plain;charset=utf-8",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `unigpa-report-${new Date().toISOString().slice(0, 10)}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast.success("Report downloaded", {
+      description: "Your GPA breakdown was saved as a text file.",
+    });
+  }
+
+  return (
+    <div className="card-elevated flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <p className="text-sm font-semibold">Export report</p>
+        <p className="text-xs text-muted-foreground">
+          Print or save your full GPA breakdown.
+        </p>
+      </div>
+      <div className="flex gap-2">
+        <button
+          onClick={handlePrint}
+          disabled={disabled}
+          className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-transform hover:-translate-y-0.5 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0"
+        >
+          Print / PDF
+        </button>
+        <button
+          onClick={handleDownload}
+          disabled={disabled}
+          className="rounded-xl border px-4 py-2 text-sm font-medium transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          .txt
+        </button>
+      </div>
+    </div>
+  );
+}
