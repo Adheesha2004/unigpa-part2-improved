@@ -151,7 +151,7 @@ function Index() {
           </div>
           <div className="flex items-center gap-3">
             <button
-              onClick={clearAll}
+              onClick={() => setConfirmClearOpen(true)}
               disabled={subjects.length === 0}
               className="rounded-xl border px-4 py-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40"
             >
