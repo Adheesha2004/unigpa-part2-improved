@@ -210,6 +210,17 @@ function Index() {
           UniGPA runs entirely in your browser. GPA = Σ(credits × grade points) ÷ Σcredits.
         </footer>
       </main>
+
+      <ConfirmDialog
+        open={confirmClearOpen}
+        onOpenChange={setConfirmClearOpen}
+        title="Clear all subjects?"
+        description="This will permanently remove every subject from your list and reset your saved data. This cannot be undone."
+        confirmLabel="Clear all"
+        cancelLabel="Keep my subjects"
+        destructive
+        onConfirm={clearAll}
+      />
     </div>
   );
 }
