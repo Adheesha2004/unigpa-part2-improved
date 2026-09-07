@@ -169,7 +169,10 @@ function Index() {
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <section className="space-y-6 lg:col-span-2">
-            <SubjectForm onAdd={addSubject} />
+            <SubjectForm
+              onAdd={addSubject}
+              existingNames={subjects.map((s) => s.name)}
+            />
             <SubjectTable
               subjects={subjects}
               onUpdate={updateSubject}

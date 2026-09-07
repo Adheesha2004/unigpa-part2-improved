@@ -4,9 +4,10 @@ import { GRADE_SCALE, type GradeLetter, type Subject } from "@/lib/gpa";
 
 interface Props {
   onAdd: (subject: Omit<Subject, "id">) => void;
+  existingNames: string[];
 }
 
-export function SubjectForm({ onAdd }: Props) {
+export function SubjectForm({ onAdd, existingNames }: Props) {
   const [name, setName] = useState("");
   const [credits, setCredits] = useState("");
   const [grade, setGrade] = useState<GradeLetter>("A");
@@ -22,6 +23,13 @@ export function SubjectForm({ onAdd }: Props) {
     // Reject numeric-only names like "12345" — a subject name must contain letters/words.
     if (!/[A-Za-zÀ-ÿ\u0600-\u06FF]/.test(trimmed)) {
       setError("Subject name must contain letters, not just numbers.");
+      return;
+    }
+    // Prevent duplicate subjects — match case-insensitively, ignoring
+    // extra spaces so "Linear Algebra" and "linear  algebra" are the same.
+    const normalized = trimmed.toLowerCase().replace(/\s+/g, " ").trim();
+    if (existingNames.some((n) => n.toLowerCase().replace(/\s+/g, " ").trim() === normalized)) {
+      setError("This subject has already been added!");
       return;
     }
     const creditValue = Number(credits);
