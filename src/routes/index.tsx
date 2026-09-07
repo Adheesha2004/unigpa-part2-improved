@@ -1,12 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
 import {
+  GRADE_SCALE,
   calculateGpa,
   newId,
   totalCredits,
   totalPoints,
   type Subject,
 } from "@/lib/gpa";
+import { useLocalStorage } from "@/hooks/use-local-storage";
 import { SubjectForm } from "@/components/gpa/SubjectForm";
 import { SubjectTable } from "@/components/gpa/SubjectTable";
 import { GpaResultCard } from "@/components/gpa/GpaResultCard";
@@ -35,13 +36,57 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
+const SUBJECTS_KEY = "unigpa.subjects.v1";
+const CALCULATED_KEY = "unigpa.calculated.v1";
+
+const SEED_SUBJECTS: Subject[] = [
+  { id: newId(), name: "Calculus II", credits: 4, grade: "A-" },
+  { id: newId(), name: "Data Structures", credits: 4, grade: "B+" },
+  { id: newId(), name: "Physics 101", credits: 3, grade: "A" },
+];
+
+const GRADES = new Set<string>(GRADE_SCALE.map((g) => g.letter));
+
+function isSubjectList(value: unknown): value is Subject[] {
+  return (
+    Array.isArray(value) &&
+    value.every((s) => {
+      if (typeof s !== "object" || s === null) return false;
+      const o = s as Record<string, unknown>;
+      return (
+        typeof o["id"] === "string" &&
+        typeof o["name"] === "string" &&
+        typeof o["credits"] === "number" &&
+        Number.isFinite(o["credits"]) &&
+        typeof o["grade"] === "string" &&
+        GRADES.has(o["grade"] as string)
+      );
+    })
+  );
+}
+
+function isBoolean(value: unknown): value is boolean {
+  return typeof value === "boolean";
+}
+
 function Index() {
-  const [subjects, setSubjects] = useState<Subject[]>([
-    { id: newId(), name: "Calculus II", credits: 4, grade: "A-" },
-    { id: newId(), name: "Data Structures", credits: 4, grade: "B+" },
-    { id: newId(), name: "Physics 101", credits: 3, grade: "A" },
-  ]);
-  const [calculated, setCalculated] = useState(false);
+  const [subjects, setSubjects, subjectsStore] = useLocalStorage<Subject[]>(
+    SUBJECTS_KEY,
+    SEED_SUBJECTS,
+    isSubjectList
+  );
+  const [calculated, setCalculated, calculatedStore] = useLocalStorage<boolean>(
+    CALCULATED_KEY,
+    false,
+    isBoolean
+  );
+
+  function clearAll() {
+    setSubjects([]);
+    setCalculated(false);
+    subjectsStore.clear();
+    calculatedStore.clear();
+  }
 
   const gpa = calculateGpa(subjects);
   const credits = totalCredits(subjects);
@@ -99,13 +144,22 @@ function Index() {
               then test What-If scenarios before results are final.
             </p>
           </div>
-          <button
-            onClick={() => setCalculated(true)}
-            disabled={subjects.length === 0}
-            className="rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-md transition-transform hover:-translate-y-0.5 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0"
-          >
-            Calculate GPA
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={clearAll}
+              disabled={subjects.length === 0}
+              className="rounded-xl border px-4 py-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Clear all
+            </button>
+            <button
+              onClick={() => setCalculated(true)}
+              disabled={subjects.length === 0}
+              className="rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-md transition-transform hover:-translate-y-0.5 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0"
+            >
+              Calculate GPA
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
