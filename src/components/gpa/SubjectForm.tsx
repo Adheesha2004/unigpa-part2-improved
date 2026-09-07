@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react";
+import { toast } from "sonner";
 import { GRADE_SCALE, type GradeLetter, type Subject } from "@/lib/gpa";
 
 interface Props {
@@ -41,6 +42,9 @@ export function SubjectForm({ onAdd }: Props) {
     setCredits("");
     setGrade("A");
     setError(null);
+    toast.success("Subject added successfully!", {
+      description: `${trimmed} · ${creditValue} credits · ${grade}`,
+    });
   }
 
   const inputClass =
