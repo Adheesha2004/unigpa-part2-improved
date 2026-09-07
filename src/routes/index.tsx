@@ -1,12 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
 import {
+  GRADE_SCALE,
   calculateGpa,
   newId,
   totalCredits,
   totalPoints,
   type Subject,
 } from "@/lib/gpa";
+import { useLocalStorage } from "@/hooks/use-local-storage";
 import { SubjectForm } from "@/components/gpa/SubjectForm";
 import { SubjectTable } from "@/components/gpa/SubjectTable";
 import { GpaResultCard } from "@/components/gpa/GpaResultCard";
