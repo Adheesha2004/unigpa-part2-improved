@@ -25,6 +25,13 @@ export function SubjectForm({ onAdd, existingNames }: Props) {
       setError("Subject name must contain letters, not just numbers.");
       return;
     }
+    // Prevent duplicate subjects — match case-insensitively, ignoring
+    // extra spaces so "Linear Algebra" and "linear  algebra" are the same.
+    const normalized = trimmed.toLowerCase().replace(/\s+/g, " ").trim();
+    if (existingNames.some((n) => n.toLowerCase().replace(/\s+/g, " ").trim() === normalized)) {
+      setError("This subject has already been added!");
+      return;
+    }
     const creditValue = Number(credits);
     if (!credits || Number.isNaN(creditValue) || creditValue <= 0) {
       setError("Credits must be a number greater than 0.");
