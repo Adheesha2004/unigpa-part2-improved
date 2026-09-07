@@ -23,6 +23,14 @@ export function SubjectTable({ subjects, onUpdate, onDelete }: Props) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draftName, setDraftName] = useState("");
   const [draftCredits, setDraftCredits] = useState("");
+  const [pendingDelete, setPendingDelete] = useState<Subject | null>(null);
+
+  function confirmDelete() {
+    if (pendingDelete) {
+      onDelete(pendingDelete.id);
+      setPendingDelete(null);
+    }
+  }
 
   function startEdit(subject: Subject) {
     setEditingId(subject.id);
@@ -149,7 +157,7 @@ export function SubjectTable({ subjects, onUpdate, onDelete }: Props) {
                             Edit
                           </button>
                           <button
-                            onClick={() => onDelete(subject.id)}
+                            onClick={() => setPendingDelete(subject)}
                             className="rounded-md px-2.5 py-1.5 text-xs font-semibold text-destructive ring-1 ring-destructive/30 transition-colors hover:bg-destructive/10"
                           >
                             Delete
