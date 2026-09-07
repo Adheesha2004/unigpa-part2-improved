@@ -8,6 +8,7 @@ import {
   type GradeLetter,
   type Subject,
 } from "@/lib/gpa";
+import { ConfirmDialog } from "@/components/gpa/ConfirmDialog";
 
 interface Props {
   subjects: Subject[];
