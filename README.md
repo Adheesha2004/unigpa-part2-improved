@@ -1,24 +1,14 @@
-# UniGPA Calculator (97)
-
-Build a responsive web application called "UniGPA – Student GPA Calculator & Planner" for university students. The main user journey is: a student adds subjects with subject name, credit value and grade, then clicks Calculate GPA and receives their weighted GPA and a clear summary.
-
-The application should have a modern, professional university-student dashboard UI. Include an Add Subject form, subjects table, Calculate GPA button, GPA result card, total credits, subject count and grade-point reference. Allow students to edit and delete subjects.
-
-Add a What-If GPA feature where students can enter hypothetical grades for subjects and see their projected GPA. Make the interface responsive for desktop and mobile. Use client-side calculation so the core calculator works without requiring a backend or API. Validate inputs and handle empty/invalid values gracefully.
-
-Prioritize a fully working application over unnecessary features. Use clean reusable components and make the final UI polished and presentation-ready.
+# Welcome to your Lovable project
 
 This project was built with [Lovable](https://lovable.dev).
 
-**Live app**: https://gpa-plan-pro.lovable.app
-
 ## Build with Lovable
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/2999b628-0614-4edf-9041-3faa3bc1e484).
+Open your project in the [Lovable editor](https://lovable.dev) and keep building.
 
 - **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
+- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
 
 ## Development
 
@@ -30,3 +20,10 @@ cd <repository-name>
 npm i
 npm run dev
 ```
+
+## Built with
+
+- TanStack Start
+- TypeScript
+- React
+- Tailwind CSS
