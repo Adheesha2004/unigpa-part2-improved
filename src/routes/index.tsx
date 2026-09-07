@@ -144,13 +144,22 @@ function Index() {
               then test What-If scenarios before results are final.
             </p>
           </div>
-          <button
-            onClick={() => setCalculated(true)}
-            disabled={subjects.length === 0}
-            className="rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-md transition-transform hover:-translate-y-0.5 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0"
-          >
-            Calculate GPA
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={clearAll}
+              disabled={subjects.length === 0}
+              className="rounded-xl border px-4 py-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Clear all
+            </button>
+            <button
+              onClick={() => setCalculated(true)}
+              disabled={subjects.length === 0}
+              className="rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-md transition-transform hover:-translate-y-0.5 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0"
+            >
+              Calculate GPA
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
