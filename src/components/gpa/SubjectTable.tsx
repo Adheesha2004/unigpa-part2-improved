@@ -183,6 +183,22 @@ export function SubjectTable({ subjects, onUpdate, onDelete }: Props) {
           </tfoot>
         </table>
       </div>
+      <ConfirmDialog
+        open={pendingDelete !== null}
+        onOpenChange={(open) => {
+          if (!open) setPendingDelete(null);
+        }}
+        title="Delete this subject?"
+        description={
+          pendingDelete
+            ? `"${pendingDelete.name}" will be removed from your list. This cannot be undone.`
+            : ""
+        }
+        confirmLabel="Delete"
+        cancelLabel="Keep it"
+        destructive
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 }

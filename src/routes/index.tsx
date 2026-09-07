@@ -14,6 +14,7 @@ import { GpaResultCard } from "@/components/gpa/GpaResultCard";
 import { WhatIfPanel } from "@/components/gpa/WhatIfPanel";
 import { GradeReference } from "@/components/gpa/GradeReference";
 import { ExportReport } from "@/components/gpa/ExportReport";
+import { ConfirmDialog } from "@/components/gpa/ConfirmDialog";
 
 export const Route = createFileRoute("/")({
   head: () => ({
