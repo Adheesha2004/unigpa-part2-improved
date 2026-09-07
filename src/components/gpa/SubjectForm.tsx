@@ -18,6 +18,11 @@ export function SubjectForm({ onAdd }: Props) {
       setError("Please enter a subject name.");
       return;
     }
+    // Reject numeric-only names like "12345" — a subject name must contain letters/words.
+    if (!/[A-Za-zÀ-ÿ\u0600-\u06FF]/.test(trimmed)) {
+      setError("Subject name must contain letters, not just numbers.");
+      return;
+    }
     const creditValue = Number(credits);
     if (!credits || Number.isNaN(creditValue) || creditValue <= 0) {
       setError("Credits must be a number greater than 0.");
@@ -52,10 +57,14 @@ export function SubjectForm({ onAdd }: Props) {
           <input
             type="text"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => {
+              setName(e.target.value);
+              if (error) setError(null);
+            }}
             placeholder="e.g. Linear Algebra"
             className={inputClass}
             maxLength={80}
+            aria-invalid={!!error}
           />
         </label>
         <label className="block">
