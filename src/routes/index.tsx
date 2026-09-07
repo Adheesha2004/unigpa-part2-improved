@@ -54,12 +54,12 @@ function isSubjectList(value: unknown): value is Subject[] {
       if (typeof s !== "object" || s === null) return false;
       const o = s as Record<string, unknown>;
       return (
-        typeof o.id === "string" &&
-        typeof o.name === "string" &&
-        typeof o.credits === "number" &&
-        Number.isFinite(o.credits) &&
-        typeof o.grade === "string" &&
-        GRADES.has(o.grade)
+        typeof o["id"] === "string" &&
+        typeof o["name"] === "string" &&
+        typeof o["credits"] === "number" &&
+        Number.isFinite(o["credits"]) &&
+        typeof o["grade"] === "string" &&
+        GRADES.has(o["grade"] as string)
       );
     })
   );
