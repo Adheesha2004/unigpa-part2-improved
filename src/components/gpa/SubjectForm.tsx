@@ -4,9 +4,10 @@ import { GRADE_SCALE, type GradeLetter, type Subject } from "@/lib/gpa";
 
 interface Props {
   onAdd: (subject: Omit<Subject, "id">) => void;
+  existingNames: string[];
 }
 
-export function SubjectForm({ onAdd }: Props) {
+export function SubjectForm({ onAdd, existingNames }: Props) {
   const [name, setName] = useState("");
   const [credits, setCredits] = useState("");
   const [grade, setGrade] = useState<GradeLetter>("A");
