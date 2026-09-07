@@ -57,10 +57,14 @@ export function SubjectForm({ onAdd }: Props) {
           <input
             type="text"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => {
+              setName(e.target.value);
+              if (error) setError(null);
+            }}
             placeholder="e.g. Linear Algebra"
             className={inputClass}
             maxLength={80}
+            aria-invalid={!!error}
           />
         </label>
         <label className="block">
