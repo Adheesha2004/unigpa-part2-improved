@@ -13,8 +13,14 @@ export function useLocalStorage<T>(
   const [hydrated, setHydrated] = useState(false);
   const validateRef = useRef(validate);
   validateRef.current = validate;
+  const loadedRef = useRef(false);
 
   useEffect(() => {
+    if (loadedRef.current) {
+      setHydrated(true);
+      return;
+    }
+    loadedRef.current = true;
     try {
       const raw = window.localStorage.getItem(key);
       if (raw !== null) {
