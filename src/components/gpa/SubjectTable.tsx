@@ -8,6 +8,7 @@ import {
   type GradeLetter,
   type Subject,
 } from "@/lib/gpa";
+import { ConfirmDialog } from "@/components/gpa/ConfirmDialog";
 
 interface Props {
   subjects: Subject[];
@@ -22,6 +23,14 @@ export function SubjectTable({ subjects, onUpdate, onDelete }: Props) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draftName, setDraftName] = useState("");
   const [draftCredits, setDraftCredits] = useState("");
+  const [pendingDelete, setPendingDelete] = useState<Subject | null>(null);
+
+  function confirmDelete() {
+    if (pendingDelete) {
+      onDelete(pendingDelete.id);
+      setPendingDelete(null);
+    }
+  }
 
   function startEdit(subject: Subject) {
     setEditingId(subject.id);
@@ -148,7 +157,7 @@ export function SubjectTable({ subjects, onUpdate, onDelete }: Props) {
                             Edit
                           </button>
                           <button
-                            onClick={() => onDelete(subject.id)}
+                            onClick={() => setPendingDelete(subject)}
                             className="rounded-md px-2.5 py-1.5 text-xs font-semibold text-destructive ring-1 ring-destructive/30 transition-colors hover:bg-destructive/10"
                           >
                             Delete
@@ -174,6 +183,22 @@ export function SubjectTable({ subjects, onUpdate, onDelete }: Props) {
           </tfoot>
         </table>
       </div>
+      <ConfirmDialog
+        open={pendingDelete !== null}
+        onOpenChange={(open) => {
+          if (!open) setPendingDelete(null);
+        }}
+        title="Delete this subject?"
+        description={
+          pendingDelete
+            ? `"${pendingDelete.name}" will be removed from your list. This cannot be undone.`
+            : ""
+        }
+        confirmLabel="Delete"
+        cancelLabel="Keep it"
+        destructive
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 }

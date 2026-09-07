@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   GRADE_SCALE,
@@ -14,6 +15,7 @@ import { GpaResultCard } from "@/components/gpa/GpaResultCard";
 import { WhatIfPanel } from "@/components/gpa/WhatIfPanel";
 import { GradeReference } from "@/components/gpa/GradeReference";
 import { ExportReport } from "@/components/gpa/ExportReport";
+import { ConfirmDialog } from "@/components/gpa/ConfirmDialog";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -81,12 +83,14 @@ function Index() {
     false,
     isBoolean
   );
+  const [confirmClearOpen, setConfirmClearOpen] = useState(false);
 
   function clearAll() {
     setSubjects([]);
     setCalculated(false);
     subjectsStore.clear();
     calculatedStore.clear();
+    setConfirmClearOpen(false);
   }
 
   const gpa = calculateGpa(subjects);
@@ -147,7 +151,7 @@ function Index() {
           </div>
           <div className="flex items-center gap-3">
             <button
-              onClick={clearAll}
+              onClick={() => setConfirmClearOpen(true)}
               disabled={subjects.length === 0}
               className="rounded-xl border px-4 py-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40"
             >
@@ -206,6 +210,17 @@ function Index() {
           UniGPA runs entirely in your browser. GPA = Σ(credits × grade points) ÷ Σcredits.
         </footer>
       </main>
+
+      <ConfirmDialog
+        open={confirmClearOpen}
+        onOpenChange={setConfirmClearOpen}
+        title="Clear all subjects?"
+        description="This will permanently remove every subject from your list and reset your saved data. This cannot be undone."
+        confirmLabel="Clear all"
+        cancelLabel="Keep my subjects"
+        destructive
+        onConfirm={clearAll}
+      />
     </div>
   );
 }
