@@ -82,12 +82,17 @@ export function SubjectForm({ onAdd, existingNames }: Props) {
           <input
             type="number"
             inputMode="decimal"
-            min="0"
+            min="1"
+            max="8"
             step="0.5"
             value={credits}
-            onChange={(e) => setCredits(e.target.value)}
+            onChange={(e) => {
+              setCredits(e.target.value);
+              if (error) setError(null);
+            }}
             placeholder="4"
             className={inputClass}
+            aria-invalid={!!error}
           />
         </label>
         <label className="block">
