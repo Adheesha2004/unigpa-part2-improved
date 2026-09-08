@@ -33,12 +33,8 @@ export function SubjectForm({ onAdd, existingNames }: Props) {
       return;
     }
     const creditValue = Number(credits);
-    if (!credits || Number.isNaN(creditValue) || creditValue <= 0) {
-      setError("Credits must be a number greater than 0.");
-      return;
-    }
-    if (creditValue > 30) {
-      setError("Credits look too high — enter a value of 30 or less.");
+    if (!credits || Number.isNaN(creditValue) || creditValue < 1 || creditValue > 8) {
+      setError("Credits must be between 1 and 8.");
       return;
     }
     if (!GRADE_SCALE.some((g) => g.letter === grade)) {
@@ -86,12 +82,17 @@ export function SubjectForm({ onAdd, existingNames }: Props) {
           <input
             type="number"
             inputMode="decimal"
-            min="0"
+            min="1"
+            max="8"
             step="0.5"
             value={credits}
-            onChange={(e) => setCredits(e.target.value)}
+            onChange={(e) => {
+              setCredits(e.target.value);
+              if (error) setError(null);
+            }}
             placeholder="4"
             className={inputClass}
+            aria-invalid={!!error}
           />
         </label>
         <label className="block">
