@@ -33,12 +33,8 @@ export function SubjectForm({ onAdd, existingNames }: Props) {
       return;
     }
     const creditValue = Number(credits);
-    if (!credits || Number.isNaN(creditValue) || creditValue <= 0) {
-      setError("Credits must be a number greater than 0.");
-      return;
-    }
-    if (creditValue > 30) {
-      setError("Credits look too high — enter a value of 30 or less.");
+    if (!credits || Number.isNaN(creditValue) || creditValue < 1 || creditValue > 6) {
+      setError("Credits must be between 1 and 6.");
       return;
     }
     if (!GRADE_SCALE.some((g) => g.letter === grade)) {
