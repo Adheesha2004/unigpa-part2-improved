@@ -40,7 +40,7 @@ export function SubjectTable({ subjects, onUpdate, onDelete }: Props) {
 
   function saveEdit(subject: Subject) {
     const credits = Number(draftCredits);
-    if (draftName.trim() && !Number.isNaN(credits) && credits > 0 && credits <= 30) {
+    if (draftName.trim() && !Number.isNaN(credits) && credits >= 1 && credits <= 6) {
       onUpdate(subject.id, { name: draftName.trim(), credits });
     }
     setEditingId(null);
